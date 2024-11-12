@@ -1,0 +1,220 @@
+/* estilos.css */
+
+
+/* Estilos para el contenedor principal */
+.container {
+    display: flex; /* Utilizamos flexbox */
+    justify-content: space-between; /* Espacio entre los elementos */
+    align-items: flex-start; /* Alineamos la parte superior */
+    padding: 20px; /* Espaciado alrededor del contenedor */
+}
+
+
+/* Estilo para la sección izquierda */
+.left {
+    flex: 0 0 10%; /* Ocupa un 30% del ancho del contenedor */
+    margin-right: 10px; /* Espacio a la derecha del contenedor izquierdo */
+}
+
+/* Estilo para la sección derecha */
+.right {
+    flex: 1; /* Ocupa un espacio flexible */
+}
+
+h1 {
+    text-align: center; /* Centramos el texto */
+    font-size: 2.5em; /* Aumentamos el tamaño de la fuente */
+    color: #26ddc6; /* Color llamativo */
+    margin-bottom: 20px; /* Espacio debajo del título */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para darle profundidad */
+    border: 2px solid #26ddc6; /* Borde del mismo color que el texto */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 10px; /* Espacio interno */
+}
+
+/* Estilo para los logos */
+.logos {
+    display: flex; /* Usamos flexbox para alinear los logos */
+    justify-content: flex-start; /* Alineamos los logos a la izquierda */
+    margin: 20px 0; /* Espacio arriba y abajo de los logos */
+}
+
+.logo {
+    width: 350px; /* Ancho de cada logo */
+    height: auto; /* Mantiene la relación de aspecto */
+    margin: 0 30px; /* Espacio entre los logos */
+}
+
+/* Estilo general para el formulario */
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif; /* Aplicamos la fuente Roboto */
+}
+
+/* Aplicar pre-wrap a los elementos que requieren respetar espacios y saltos */
+.preserve-whitespace {
+    white-space: pre-wrap; /* Preserva saltos de línea y espacios en blanco */
+}
+
+/* Estilo para los inputs y selects */
+input[type="text"],
+select {
+    font-family: 'Roboto', sans-serif; /* Aseguramos que los inputs también usen la misma fuente */
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-style: normal;
+}
+
+/* Estilo para los labels */
+label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+button {
+    background-color: #26ddc6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+@media (max-width: 600px) {
+    input[type="text"], select {
+        max-width: 100%;
+    }
+
+    form {
+        padding: 15px;
+    }
+}
+
+#grupos_cups,
+#CUPS,
+#enunciado_cups,
+#concepto_especialidad,
+#grupo_trabajo_piloto,
+#brigada,
+#responsable_clinico,
+#apoyo,
+#responsable_ingenieria{background-color: #80baf0;}
+
+
+#grupos_subgrupos,
+#descripcion_no_estructurada,
+#fuente_0{background-color: #7a8383;}
+
+
+#tipo_procedimiento_naturaleza,
+#fuente_1,
+#accion_ejercida,
+#fuente_2,
+#estr_org_reg,
+#fuente_3,
+#tecnica, 
+#fuente_4,
+#via_abordaje,
+#fuente_5,
+#DM_Procedimiento,
+#nombre_DM,
+#tipo_DM,
+#cod_DM,
+#clase_DM,
+#fuente_6,
+#especialidad,
+#fuente_7,
+#intervencion,
+#fuente_8,
+#agente_metabolito,
+#fuente_9,
+#tipo_muestra,
+#fuente_10,
+#def_procedimiento{background-color: #f079d2;}
+
+#proposito,
+#fuente_11,
+#finalidad,
+#fuente_12,
+#ambito_habilitacion,
+#fuente_13,
+#modalidad,
+#fuente_14,
+#area_clinica_disciplina,
+#fuente_15,
+#dx_cie10,
+#dx_cie11,
+#invasividad,
+#fuente_16,
+#riesgo_paciente,
+#fuente_17,
+#cantidad_dm,
+#nombre_dm_1,
+#tipo_dm_1,
+#codigo_dm_1,
+#clas_riesgo_dm_1,
+#fuente_dm_1,
+#nombre_dm_2,
+#tipo_dm_2,
+#codigo_dm_2,
+#clas_riesgo_dm_2,
+#fuente_dm_2,
+#nombre_dm_3,
+#tipo_dm_3,
+#codigo_dm_3,
+#clas_riesgo_dm_3,
+#fuente_dm_3,
+#nombre_dm_4,
+#tipo_dm_4,
+#codigo_dm_4,
+#clas_riesgo_dm_4,
+#fuente_dm_4,
+#nombre_dm_5,
+#tipo_dm_5,
+#codigo_dm_5,
+#clas_riesgo_dm_5,
+#fuente_dm_5,
+#metodo,
+#fuente_18,
+#temperatura,
+#fuente_19{background-color:  #67eee3;}
+
+#extensores_1,
+#extensores_2,
+#extensores_3{background-color:  #c559b7;}
+
+#evidencia_uso,
+#dicotomia_obselencia_cl,
+#fuente_20,
+#opinion_clinica,
+#dicotomia_obselencia_ci,   
+#fuente_21,
+#frecuencia_uso,
+#obsolescencia{background-color:  #f58652;}
+
+#pro_funcion,
+#fuente_22,
+#pro_mejor_funcion{background-color:  #4c39f7;}
+
+#codigo_ichi,
+#des_ichi_objetivo,
+#des_ichi_accion,
+#des_ichi_medio,
+#des_ichi_procedimiento{background-color:  #7cf145;}

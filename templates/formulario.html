@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Detectar el envío del formulario
+            const form = document.querySelector('form');
+            const submitButton = document.querySelector('button[type="submit"]');
+        
+            form.addEventListener('keydown', function(event) {
+                // Si la tecla presionada es "Enter"
+                if (event.key === "Enter") {
+                    // Prevenir el envío del formulario
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        
+            // Asegurarse de que se envíe solo cuando el botón se hace clic
+            submitButton.addEventListener('click', function(event) {
+                form.submit();
+            });
+        });
+    </script>
+
+
+    <script>
+        function mostrarCamposDM() {
+            // Obtener la cantidad seleccionada
+            var cantidad = document.getElementById("cantidad_dm").value;
+
+            // Ocultar todos los bloques de dispositivos médicos
+            for (var i = 1; i <= 5; i++) {
+                document.getElementById("dm_" + i).style.display = "none";
+            }
+
+            // Mostrar los campos según la cantidad seleccionada
+            for (var i = 1; i <= cantidad; i++) {
+                document.getElementById("dm_" + i).style.display = "block";
+            }
+        }
+
+
+        // Llenar los campos dinámicos con los valores traídos desde el servidor
+        function llenarCamposDispositivos(resultDict) {
+            var cantidadDM = resultDict['Cantidad DM'] || 0;
+
+            
+
+            document.getElementById("cantidad_dm").value = cantidadDM;
+
+            // Mostrar los campos de dispositivos médicos
+            mostrarCamposDM();
+
+            // Llenar los valores de cada dispositivo médico según el diccionario
+            for (var i = 1; i <= cantidadDM; i++) {
+                if (resultDict['Otros dispositivos esenciales: Nombre dispositivo médico ' + i]) {
+                    document.getElementById('nombre_dm_' + i).value = resultDict['Otros dispositivos esenciales: Nombre dispositivo médico ' + i];
+                    //const nombre_prueba_dm = resultDict['Otros dispositivos esenciales: Nombre dispositivo médico ' + i];
+                    //console.log("Nombre", nombre_prueba_dm);
+                    document.getElementById('tipo_dm_' + i).value = resultDict['Otros dispositivos esenciales: Tipo dispositivo médico ' + i];
+                    document.getElementById('codigo_dm_' + i).value = resultDict['Otros dispositivos esenciales: Código UDI-ID o GMDN dispositivo médico ' + i];
+                    document.getElementById('clas_riesgo_dm_' + i).value = resultDict['Otros dispositivos esenciales: Clase de riesgo dispositivo médico ' + i];
+                    document.getElementById('fuente_dm_' + i).value = resultDict['fuente_dm_' + i];
+                }
+            }
+        }
+    </script>
+
+
+
+    <script>
+        function buscarCUPS() {
+            const CUPS = document.getElementById('CUPS').value;
+
+            console.log("Valor ingresado en el input CUPS:", CUPS);
+
+            if (!CUPS) {
+                alert("Por favor ingrese un valor en el campo CUPS.");
+                return;
+            }
+
+            // Realizar la solicitud fetch
+            fetch('/buscar_cups', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ CUPS: CUPS }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Datos recibidos del servidor:", data);
+
+                if (data.length > 0) {
+                    // Obtener el primer resultado
+                    const resultado = data[0];
+
+                    // Llenar cada campo con los valores del diccionario o dejar vacío si no existe
+                    document.getElementById('grupos_cups').value = resultado['GRUPOS CUPS'] || '';
+                    document.getElementById('enunciado_cups').value = resultado['ENUNCIADO CUPS Resolución 2336 de 2023'] || '';
+                    document.getElementById('concepto_especialidad').value = resultado['Concepto_Especialidad'] || '';
+                    document.getElementById('grupo_trabajo_piloto').value = resultado['Grupo trabajo'] || '';
+                    document.getElementById('brigada').value = resultado['Brigada'] || '';
+                    document.getElementById('responsable_clinico').value = resultado['Responsable Clinico'] || '';
+                    document.getElementById('apoyo').value = resultado['Apoyo'] || '';
+                    document.getElementById('responsable_ingenieria').value = resultado['Responsable ingenieria'] || '';
+                    //Gris
+                    const grupos_cupsValue = resultado['Grupos/subgrupos'] || '';
+                    document.getElementById('grupos_subgrupos').value = grupos_cupsValue;
+                    document.getElementById('descripcion_no_estructurada').value = resultado['Descripción del procedimiento (no estructurada)'] || '';
+                    document.getElementById('fuente_0').value = resultado['fuente_0'] || '';
+                    //Rosado
+                    const procedimiento_naturalezaValue = resultado['Tipo de procedimiento- naturaleza'] || '';
+                    document.getElementById('tipo_procedimiento_naturaleza').value = procedimiento_naturalezaValue;
+                    document.getElementById('fuente_1').value = resultado['fuente_1'] || '';
+                    const procedimiento_accion_ejercidaValue = resultado['Accion ejercida'] || '';
+                    document.getElementById('accion_ejercida').value = procedimiento_accion_ejercidaValue;
+                    document.getElementById('fuente_2').value = resultado['fuente_2'] || '';
+                    const estr_org_regValue = resultado['Estructura/órgano/región anatomica'] || '';
+                    document.getElementById('estr_org_reg').value = estr_org_regValue;
+                    document.getElementById('fuente_3').value = resultado['fuente_3'] || '';
+                    document.getElementById('tecnica').value = resultado['tecnica'] || '';
+                    document.getElementById('fuente_4').value = resultado['fuente_4'] || '';
+                    const via_abordajeValue = resultado['Vía de abordaje'] || '';
+                    document.getElementById('via_abordaje').value = via_abordajeValue;
+                    document.getElementById('fuente_5').value = resultado['fuente_5'] || '';
+                    document.getElementById('DM_Procedimiento').value = resultado['Dispositivo médico que define el procedimiento'] || '';
+                    document.getElementById('nombre_DM').value = resultado['Nombre dispositivo médico'] || '';
+                    document.getElementById('tipo_DM').value = resultado['Tipo de dispositivo médico'] || '';
+                    document.getElementById('cod_DM').value = resultado['codigo UDI-ID o GMDN dispositivo médico'] || '';
+                    document.getElementById('clase_DM').value = resultado['Clase de riesgo dispositivo médico'] || '';
+                    document.getElementById('fuente_6').value = resultado['fuente_6'] || '';
+                    document.getElementById('especialidad').value = resultado['Especialidad'] || '';
+                    document.getElementById('fuente_7').value = resultado['fuente_7'] || '';
+                    document.getElementById('intervencion').value = resultado['Intervención'] || '';
+                    document.getElementById('fuente_8').value = resultado['fuente_8'] || '';
+                    document.getElementById('agente_metabolito').value = resultado['Agente/metabolito'] || '';
+                    document.getElementById('fuente_9').value = resultado['fuente_9'] || '';
+                    document.getElementById('tipo_muestra').value = resultado['Tipo de muestra'] || '';
+                    document.getElementById('fuente_10').value = resultado['fuente_10'] || '';
+                    document.getElementById('def_procedimiento').value = resultado['Definición del procedimiento (segun estructura semántica)'] || '';
+                    // verde_turquesa
+                    const propositoValue = resultado['Proposito'] || '';
+                    document.getElementById('proposito').value = propositoValue;
+                    document.getElementById('fuente_11').value = resultado['fuente_11'] || '';
+                    const finalidadValue = resultado['Finalidad'] || '';
+                    document.getElementById('finalidad').value = finalidadValue;
+                    document.getElementById('fuente_12').value = resultado['fuente_12'] || '';
+                    const ambito_habilitacionValue = resultado['Ambito'] || '';
+                    document.getElementById('ambito_habilitacion').value = ambito_habilitacionValue;
+                    document.getElementById('fuente_13').value = resultado['fuente_13'] || '';
+                    const modalidadValue = resultado['Modalidad'] || '';
+                    document.getElementById('modalidad').value = modalidadValue;
+                    document.getElementById('fuente_14').value = resultado['fuente_14'] || '';
+                    document.getElementById('area_clinica_disciplina').value = resultado['Area clínica o disciplina del conocimiento'] || '';
+                    document.getElementById('fuente_15').value = resultado['fuente_15'] || '';
+                    document.getElementById('dx_cie10').value = resultado['Diagnóstico relacionado CIE 10'] || '';
+                    document.getElementById('dx_cie11').value = resultado['Diagnóstico relacionado CIE 11'] || '';
+                    const invsividadValue = resultado['Grado de invasividad'] || '';
+                    document.getElementById('invasividad').value = invsividadValue;
+                    document.getElementById('fuente_16').value = resultado['fuente_16'] || '';
+                    const riesgopacienteValue = resultado['Riesgos'] || '';
+                    document.getElementById('riesgo_paciente').value = riesgopacienteValue;
+                    document.getElementById('fuente_17').value = resultado['fuente_17'] || '';
+                    const cantidad_dmValue = resultado['Cantidad DM'] || '';
+                    console.log("Valor ingresado en el input Cantidad DM:", cantidad_dmValue);
+                    document.getElementById('cantidad_dm').value = cantidad_dmValue;
+                    llenarCamposDispositivos(resultado);
+                    document.getElementById('metodo').value = resultado['Método de análisis'] || '';
+                    document.getElementById('fuente_18').value = resultado['fuente_18'] || '';
+                    document.getElementById('temperatura').value = resultado['Temperatura de conservación'] || '';
+                    document.getElementById('fuente_19').value = resultado['fuente_19'] || '';
+                    // lila
+                    const extensores1Value = resultado['Extensor 1'] || '';
+                    document.getElementById('extensores_1').value = extensores1Value;
+                    const extensores2Value = resultado['Extensor 2'] || '';
+                    document.getElementById('extensores_2').value = extensores2Value;
+                    const extensores3Value = resultado['Extensor 3'] || '';
+                    document.getElementById('extensores_3').value = extensores3Value;
+                    //naranja
+                    document.getElementById('evidencia_uso').value = resultado['Evidencia que desaconseje su uso actual'] || '';
+                    const dic_ciValue = resultado['Dicotomizada obsolescencia evidencia científica'] || '';
+                    document.getElementById('dicotomia_obselencia_ci').value = dic_ciValue;
+                    document.getElementById('fuente_20').value = resultado['fuente_20'] || '';
+                    document.getElementById('opinion_clinica').value = resultado['Opinión clinica que desaconseje su uso actual'] || '';
+                    const dic_clValue = resultado['Dicotomizada obsolescencia evidencia clínica'] || '';
+                    document.getElementById('dicotomia_obselencia_cl').value = dic_clValue;
+                    document.getElementById('fuente_21').value = resultado['fuente_21'] || '';
+                    document.getElementById('frecuencia_uso').value = resultado['Frecuencia de uso (categoría por percentil)'] || '';
+                    document.getElementById('obsolescencia').value = resultado['Obsolecencia (regla de decisión: evidencia que desaconseje su uso u opinión clínica que desaconseja su uso + baja frecuencia (no explicada por prevalencia de la condición o indicación del procedimiento)'] || '';
+                    // azul
+                    document.getElementById('pro_funcion').value = resultado['Procedimiento que realice la misma función'] || '';
+                    document.getElementById('fuente_22').value = resultado['fuente_22'] || '';
+                    document.getElementById('pro_mejor_funcion').value = resultado['Procedimiento que realice la misma función con: mayor efectividad, seguridad o sea más especifico'] || '';
+                    // verde_amarilloso
+                    document.getElementById('codigo_ichi').value = resultado['Codigo ICHI'] || '';
+                    document.getElementById('des_ichi_objetivo').value = resultado['Descripción ICHI objetivo'] || '';
+                    document.getElementById('des_ichi_accion').value = resultado['Descripción ICHI acción'] || '';
+                    document.getElementById('des_ichi_medio').value = resultado['Descripción ICHI medio'] || '';
+                    document.getElementById('des_ichi_procedimiento').value = resultado['Descripción ICHI procedimiento'] || '';
+                   
+                } else {
+                    // Si no se encuentran resultados, dejar los campos vacíos
+                    document.getElementById('grupos_cups').value = '';
+                    document.getElementById('enunciado_cups').value = '';
+                    document.getElementById('concepto_especialidad').value = '';
+                    document.getElementById('grupo_trabajo_piloto').value = '';
+                    document.getElementById('brigada').value = '';
+                    document.getElementById('responsable_clinico').value = '';
+                    document.getElementById('apoyo').value = '';
+                    document.getElementById('responsable_ingenieria').value = '';
+                    //Gris
+                    document.getElementById('grupos_subgrupos').value = '';
+                    document.getElementById('descripcion_no_estructurada').value = '';
+                    document.getElementById('fuente_0').value = '';
+                    //Rosado
+                    document.getElementById('tipo_procedimiento_naturaleza').value = '';
+                    document.getElementById('fuente_1').value = '';
+                    document.getElementById('accion').value = '';
+                    document.getElementById('fuente_2').value = '';
+                    document.getElementById('estr_org_reg').value = '';
+                    document.getElementById('fuente_3').value = '';
+                    document.getElementById('tecnica').value = '';
+                    document.getElementById('fuente_4').value = '';
+                    document.getElementById('via_abordaje').value = '';
+                    document.getElementById('fuente_5').value  = '';
+                    document.getElementById('DM_Procedimiento').value  = '';
+                    document.getElementById('nombre_DM').value  = '';
+                    document.getElementById('tipo_DM').value  = '';
+                    document.getElementById('cod_DM').value  = '';
+                    document.getElementById('clase_DM').value  = '';
+                    document.getElementById('fuente_6').value  = '';
+                    document.getElementById('especialidad').value  = '';
+                    document.getElementById('fuente_7').value  = '';
+                    document.getElementById('intervencion').value  = '';
+                    document.getElementById('fuente_8').value  = '';
+                    document.getElementById('agente_metabolito').value  = '';
+                    document.getElementById('fuente_9').value  = '';
+                    document.getElementById('tipo_muestra').value  = '';
+                    document.getElementById('fuente_10').value  = '';
+                    document.getElementById('def_procedimiento').value  = '';
+                    //verde_turquesa
+                    document.getElementById('proposito').value = '';
+                    document.getElementById('fuente_11').value = '';
+                    document.getElementById('finalidad').value = '';
+                    document.getElementById('fuente_12').value = '';
+                    document.getElementById('ambito_habilitacion').value = '';
+                    document.getElementById('fuente_13').value = '';
+                    document.getElementById('modalidad').value = '';
+                    document.getElementById('fuente_14').value = '';
+                    document.getElementById('area_clinica_disciplina').value = '';
+                    document.getElementById('fuente_15').value = '';
+                    document.getElementById('dx_cie10').value = '';
+                    document.getElementById('dx_cie11').value = '';
+                    document.getElementById('invasividad').value = '';
+                    document.getElementById('fuente_16').value = '';
+                    document.getElementById('riesgo_paciente').value = '';
+                    document.getElementById('fuente_17').value = '';
+                    document.getElementById('cantidad_dm').value = '';
+                    document.getElementById('metodo').value = '';
+                    document.getElementById('fuente_18').value = '';
+                    document.getElementById('temperatura').value = '';
+                    document.getElementById('fuente_19').value = '';
+                    // lila
+                    document.getElementById('extensores_1').value = '';
+                    document.getElementById('extensores_2').value = '';
+                    document.getElementById('extensores_3').value = '';
+                    // naranja
+                    document.getElementById('evidencia_uso').value = '';
+                    document.getElementById('dicotomia_obselencia_ci').value = '';
+                    document.getElementById('fuente_20').value = '';
+                    document.getElementById('opinion_clinica').value = '';
+                    document.getElementById('dicotomia_obselencia_cl').value = '';
+                    document.getElementById('fuente_21').value = '';
+                    document.getElementById('frecuencia_uso').value = '';
+                    document.getElementById('obsolescencia').value = '';
+                    // azul
+                    document.getElementById('pro_funcion').value = '';
+                    document.getElementById('fuente_22').value = '';
+                    document.getElementById('pro_mejor_funcion').value = '';
+                    // verde_amarilloso
+                    document.getElementById('codigo_ichi').value = '';
+                    document.getElementById('des_ichi_objetivo').value = '';
+                    document.getElementById('des_ichi_accion').value = '';
+                    document.getElementById('des_ichi_medio').value = '';
+                    document.getElementById('des_ichi_procedimiento').value = '';
+                    alert("No se encontraron resultados.");
+                }
+            })
+            .catch(error => {
+                console.error("Error en la solicitud fetch:", error);
+            });
+        }
+    </script>
+
+
+</head>
+<body>
+    <body>
+        <div class="container">
+            <div class="left">
+                <h1>Formulario CUPS</h1>
+                <div class="logos">
+                    <img src="static/logo1.png" alt="Logo 1" class="logo">
+                </div>
+            </div>
+            <div class="right">
+                <form method="POST">
+
+                    <!-- Campos de texto azul -->
+
+                    <label for="grupos_cups">Grupos CUPS:</label>
+                    <input type="text" id="grupos_cups" name="grupos_cups">
+                    <br><br>
+
+                    <label for="CUPS">CUPS:</label>
+                    <input type="text" id="CUPS" name="CUPS">
+                    <button type="button" id="buscar_cups" onclick="buscarCUPS()">Buscar</button>
+                    <br><br>
+
+                    <label for="enunciado_cups">Enunciado CUPS Resolución 2336 de 2023:</label>
+                    <input type="text" id="enunciado_cups" name="enunciado_cups">
+                    <br><br>
+
+                    <label for="concepto_especialidad">Concepto Especialidad:</label>
+                    <input type="text" id="concepto_especialidad" name="concepto_especialidad">
+                    <br><br>
+
+                    <label for="grupo_trabajo_piloto">Grupo trabajo piloto:</label>
+                    <input type="text" id="grupo_trabajo_piloto" name="grupo_trabajo_piloto">
+                    <br><br>
+
+                    <label for="brigada">Brigada:</label>
+                    <input type="text" id="brigada" name="brigada">
+                    <br><br>
+
+                    <label for="responsable_clinico">Responsable Clínico:</label>
+                    <input type="text" id="responsable_clinico" name="responsable_clinico">
+                    <br><br>
+
+                    <label for="apoyo">Apoyo:</label>
+                    <input type="text" id="apoyo" name="apoyo">
+                    <br><br>
+
+                    <label for="responsable_ingenieria">Responsable Ingeniería:</label>
+                    <input type="text" id="responsable_ingenieria" name="responsable_ingenieria">
+                    <br><br>
+
+                    <!-- Campos de texto gris informacion general -->
+
+                    <label for="grupos_subgrupos">Grupos/subgrupos:</label>
+                    <select name="grupos_subgrupos" id="grupos_subgrupos">
+                        {% for option in grupos_cups_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                    
+                    <label for="descripcion_no_estructurada">Descripción del procedimiento (no estructurada):</label>
+                    <input type="text" id="descripcion_no_estructurada" name="descripcion_no_estructurada">
+                    <br><br>
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_0" name="fuente_0">
+                    <br><br>
+
+                    <!-- Campos de texto rosado -->
+
+                    <label for="tipo_procedimiento_naturaleza">Tipo de procedimiento- naturaleza:</label>
+                    <select name="tipo_procedimiento_naturaleza" id="tipo_procedimiento_naturaleza">
+                        {% for option in tipo_procedimiento_naturaleza_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_1" name="fuente_1">
+                    <br><br>
+
+                    <label for="accion_ejercida">Accion ejercida:</label>
+                    <select name="accion_ejercida" id="accion_ejercida">
+                        {% for option in accion_ejercida_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_2" name="fuente_2">
+                    <br><br>
+
+                    <label for="estr_org_reg">Estructura/órgano/región anatomica:</label>
+                    <input type="text" id="estr_org_reg" name="estr_org_reg">
+                    
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_3" name="fuente_3">
+                    <br><br>
+
+                    <label for="tecnica">Tecnica:</label>
+                    <input type="text" id="tecnica" name="tecnica">
+                      
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_4" name="fuente_4">
+                    <br><br>
+
+                    <label for="via_abordaje">Vía de abordaje:</label>
+                    <select name="via_abordaje" id="via_abordaje">
+                        {% for option in via_abordaje_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_5" name="fuente_5">
+                    <br><br>
+
+                    <label for="DM_Procedimiento">Dispositivo médico que define el procedimiento:</label>
+                    <input type="text" id="DM_Procedimiento" name="DM_Procedimiento">
+                    <br><br>
+
+                    <label for="nombre_DM">Nombre dispositivo médico:</label>
+                    <input type="text" id="nombre_DM" name="nombre_DM">
+                    <br><br>
+
+                    <label for="tipo_DM">Tipo de dispositivo médico:</label>
+                    <input type="text" id="tipo_DM" name="tipo_DM">
+                    <br><br>
+
+                    <label for="cod_DM">codigo UDI-ID o GMDN dispositivo médico:</label>
+                    <input type="text" id="cod_DM" name="cod_DM">
+                    <br><br>
+
+                    <label for="clase_DM">Clase de riesgo dispositivo médico:</label>
+                    <input type="text" id="clase_DM" name="clase_DM">
+                    <br><br> 
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_6" name="fuente_6">
+                    <br><br>
+
+                    <label for="especialidad">Especialidad:</label>
+                    <input type="text" id="especialidad" name="especialidad">
+                    <br><br> 
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_7" name="fuente_7">
+                    <br><br>
+
+                    <label for="intervencion">Intervención:</label>
+                    <input type="text" id="intervencion" name="intervencion">
+                    <br><br> 
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_8" name="fuente_8">
+                    <br><br>
+
+                    <label for="agente_metabolito">Agente/metabolito:</label>
+                    <input type="text" id="agente_metabolito" name="agente_metabolito">
+                    <br><br> 
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_9" name="fuente_9">
+                    <br><br>
+
+                    <label for="tipo_muestra">Tipo de muestra:</label>
+                    <input type="text" id="tipo_muestra" name="tipo_muestra">
+                    <br><br> 
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_10" name="fuente_10">
+                    <br><br>
+
+                    <label for="def_procedimiento">Definición del procedimiento (segun estructura semántica):</label>
+                    <input type="text" id="def_procedimiento" name="def_procedimiento">
+                    <br><br>
+
+
+                    <!-- Campos de texto verde turquesa -->
+
+                    <label for="proposito">Proposito:</label>
+                    <select name="proposito" id="proposito">
+                        {% for option in proposito_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_11" name="fuente_11">
+                    <br><br>
+
+                    <label for="finalidad">Finalidad:</label>
+                    <select name="finalidad" id="finalidad">
+                        {% for option in finalidad_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_12" name="fuente_12">
+                    <br><br>
+
+                    <label for="ambito_habilitacion">Ámbito:</label>
+                    <select name="ambito_habilitacion" id="ambito_habilitacion">
+                        {% for option in ambito_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_13" name="fuente_13">
+                    <br><br>
+
+                    <label for="modalidad">Modalidad:</label>
+                    <select name="modalidad" id="modalidad">
+                        {% for option in modalidad_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_14" name="fuente_14">
+                    <br><br>
+
+                    <label for="area_clinica_disciplina">Area clínica o disciplina del conocimiento:</label>
+                    <input type="text" id="area_clinica_disciplina" name="area_clinica_disciplina">
+                    
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_15" name="fuente_15">
+                    <br><br>
+
+                    <label for="dx_cie10">Diagnóstico relacionado CIE 10:</label>
+                    <input type="text" id="dx_cie10" name="dx_cie10">
+                    <br><br>
+
+                    <label for="dx_cie11">Diagnóstico relacionado CIE 11:</label>
+                    <input type="text" id="dx_cie11" name="dx_cie11">
+                    <br><br>
+
+                    <label for="invasividad">Grado de invasividad:</label>
+                    <select name="invasividad" id="invasividad">
+                        {% for option in invasividad_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    &nbsp &nbsp &nbsp
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_16" name="fuente_16">
+                    <br><br>
+
+                    <label for="riesgo_paciente">Riesgos:</label>
+                    <select name="riesgo_paciente" id="riesgo_paciente">
+                        {% for option in riesgo_paciente_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_17" name="fuente_17">
+                    <br><br>
+
+                    <label for="cantidad_dm">Cantidad de Dispositivos Médicos:</label>
+                    <select id="cantidad_dm" name="cantidad_dm" onchange="mostrarCamposDM()">
+                        <option value="0">No aplica</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+
+                    <!-- Campos dinámicos para dispositivos médicos -->
+                    <!-- Para cada DM (1 a 5), crear un bloque que se mostrará u ocultará según la cantidad seleccionada -->
+
+                    <!-- Dispositivo Médico 1 -->
+                    <div id="dm_1" style="display:none;">
+                        <h3>Dispositivo Médico 1</h3>
+                        <label for="nombre_dm_1">Otros dispositivos esenciales: Nombre dispositivo médico 1:</label>
+                        <input type="text" id="nombre_dm_1" name="nombre_dm_1">
+
+                        <label for="tipo_dm_1">Otros dispositivos esenciales: Tipo dispositivo médico 1:</label>
+                        <select id="tipo_dm_1" name="tipo_dm_1">
+                            {% for option in tipo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="codigo_dm_1">Otros dispositivos esenciales: Código UDI-ID o GMDN dispositivo médico 1:</label>
+                        <input type="text" id="codigo_dm_1" name="codigo_dm_1">
+
+                        <label for="clas_riesgo_dm_1">Otros dispositivos esenciales: Clase de riesgo dispositivo médico 1:</label>
+                        <select id="clas_riesgo_dm_1" name="clas_riesgo_dm_1">
+                            {% for option in clase_riesgo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="fuente_dm_1">Fuente del DM 1:</label>
+                        <input type="text" id="fuente_dm_1" name="fuente_dm_1">
+                    </div>
+
+                    <!-- Dispositivo Médico 2 -->
+                    <div id="dm_2" style="display:none;">
+                        <h3>Dispositivo Médico 2</h3>
+                        <label for="nombre_dm_2">Otros dispositivos esenciales: Nombre dispositivo médico 2:</label>
+                        <input type="text" id="nombre_dm_2" name="nombre_dm_2">
+
+                        <label for="tipo_dm_2">Otros dispositivos esenciales: Tipo dispositivo médico 2:</label>
+                        <select id="tipo_dm_2" name="tipo_dm_2">
+                            {% for option in tipo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="codigo_dm_2">Otros dispositivos esenciales: Código UDI-ID o GMDN dispositivo médico 2:</label>
+                        <input type="text" id="codigo_dm_2" name="codigo_dm_2">
+
+                        <label for="clas_riesgo_dm_2">Otros dispositivos esenciales: Clase de riesgo dispositivo médico 2:</label>
+                        <select id="clas_riesgo_dm_2" name="clas_riesgo_dm_2">
+                            {% for option in clase_riesgo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="fuente_dm_2">Fuente del DM 2:</label>
+                        <input type="text" id="fuente_dm_2" name="fuente_dm_2">
+                    </div>
+
+                    <!-- Dispositivo Médico 3 -->
+                    <div id="dm_3" style="display:none;">
+                        <h3>Dispositivo Médico 3</h3>
+                        <label for="nombre_dm_3">Otros dispositivos esenciales: Nombre dispositivo médico 3:</label>
+                        <input type="text" id="nombre_dm_3" name="nombre_dm_3">
+
+                        <label for="tipo_dm_3">Otros dispositivos esenciales: Tipo dispositivo médico 3:</label>
+                        <select id="tipo_dm_3" name="tipo_dm_3">
+                            {% for option in tipo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="codigo_dm_3">Otros dispositivos esenciales: Código UDI-ID o GMDN dispositivo médico 3:</label>
+                        <input type="text" id="codigo_dm_3" name="codigo_dm_3">
+
+                        <label for="clas_riesgo_dm_3">Otros dispositivos esenciales: Clase de riesgo dispositivo médico 3:</label>
+                        <select id="clas_riesgo_dm_3" name="clas_riesgo_dm_3">
+                            {% for option in clase_riesgo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="fuente_dm_3">Fuente del DM 3:</label>
+                        <input type="text" id="fuente_dm_3" name="fuente_dm_3">
+                    </div>
+
+                    <!-- Dispositivo Médico 4 -->
+                    <div id="dm_4" style="display:none;">
+                        <h3>Dispositivo Médico 4</h3>
+                        <label for="nombre_dm_4">Otros dispositivos esenciales: Nombre dispositivo médico 4:</label>
+                        <input type="text" id="nombre_dm_4" name="nombre_dm_4">
+
+                        <label for="tipo_dm_4">Otros dispositivos esenciales: Tipo dispositivo médico 4:</label>
+                        <select id="tipo_dm_4" name="tipo_dm_4">
+                            {% for option in tipo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="codigo_dm_4">Otros dispositivos esenciales: Código UDI-ID o GMDN dispositivo médico 4:</label>
+                        <input type="text" id="codigo_dm_4" name="codigo_dm_4">
+
+                        <label for="clas_riesgo_dm_4">Otros dispositivos esenciales: Clase de riesgo dispositivo médico 4:</label>
+                        <select id="clas_riesgo_dm_4" name="clas_riesgo_dm_4">
+                            {% for option in clase_riesgo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="fuente_dm_4">Fuente del DM 4:</label>
+                        <input type="text" id="fuente_dm_4" name="fuente_dm_4">
+                    </div>
+
+                    <!-- Dispositivo Médico 5 -->
+                    <div id="dm_5" style="display:none;">
+                        <h3>Dispositivo Médico 5</h3>
+                        <label for="nombre_dm_5">Otros dispositivos esenciales: Nombre dispositivo médico 5:</label>
+                        <input type="text" id="nombre_dm_5" name="nombre_dm_5">
+
+                        <label for="tipo_dm_5">Otros dispositivos esenciales: Tipo dispositivo médico 5:</label>
+                        <select id="tipo_dm_5" name="tipo_dm_5">
+                            {% for option in tipo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="codigo_dm_5">Otros dispositivos esenciales: Código UDI-ID o GMDN dispositivo médico 5:</label>
+                        <input type="text" id="codigo_dm_5" name="codigo_dm_5">
+
+                        <label for="clas_riesgo_dm_5">Otros dispositivos esenciales: Clase de riesgo dispositivo médico 5:</label>
+                        <select id="clas_riesgo_dm_5" name="clas_riesgo_dm_5">
+                            {% for option in clase_riesgo_dm_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="fuente_dm_5">Fuente del DM 5:</label>
+                        <input type="text" id="fuente_dm_5" name="fuente_dm_5">
+                    </div>
+
+                    <label for="metodo">Método de análisis:</label>
+                    <input type="text" id="metodo" name="metodo">
+                    <br><br>
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_18" name="fuente_18">
+                    <br><br>
+
+                    <label for="temperatura">Temperatura de conservación:</label>
+                    <input type="text" id="temperatura" name="temperatura">
+                    <br><br>
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_19" name="fuente_19">
+                    <br><br>
+                    
+
+                     <!-- Campos de texto lila -->
+
+                    <label for="extensores_1">Extensor 1:</label>
+                    <select name="extensores_1" id="extensores_1">
+                        {% for option in extensores_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <label for="extensores_2">Extensor 2:</label>
+                    <select name="extensores_2" id="extensores_2">
+                        {% for option in extensores_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <label for="extensores_3">Extensor 3:</label>
+                    <select name="extensores_3" id="extensores_3">
+                        {% for option in extensores_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <!-- Campos de texto naranja -->
+                    
+                    <label for="evidencia_uso">Evidencia que desaconseje su uso actual:</label>
+                    <input type="text" id="evidencia_uso" name="evidencia_uso">
+                    <br><br>
+
+                    <label for="dicotomia_obselencia_ci">Dicotomizada obsolescencia evidencia científica:</label>
+                    <select name="dicotomia_obselencia_ci" id="dicotomia_obselencia_ci">
+                        {% for option in dicotomia_obselencia_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_20" name="fuente_20">
+                    <br><br>
+
+                    <label for="opinion_clinica">Opinión clinica que desaconseje su uso actual:</label>
+                    <input type="text" id="opinion_clinica" name="opinion_clinica">
+                    <br><br>
+
+                    <label for="dicotomia_obselencia_cl">Dicotomizada obsolescencia evidencia clínica:</label>
+                    <select name="dicotomia_obselencia_cl" id="dicotomia_obselencia_cl">
+                        {% for option in dicotomia_obselencia_options %}
+                        <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_21" name="fuente_21">
+                    <br><br>
+
+                    <label for="frecuencia_uso">Frecuencia de uso (categoría por percentil):</label>
+                    <input type="text" id="frecuencia_uso" name="frecuencia_uso">
+                    <br><br>
+
+                    <label for="obsolescencia">Obsolecencia (regla de decisión: evidencia que desaconseje su uso u opinión clínica que desaconseja su uso + baja frecuencia (no explicada por prevalencia de la condición o indicación del procedimiento):</label>
+                    <input type="text" id="obsolescencia" name="obsolescencia">
+                    <br><br>
+
+
+                    <!-- Campos de texto azul -->
+
+                    <label for="pro_funcion">Procedimiento que realice la misma función:</label>
+                    <input type="text" id="pro_funcion" name="pro_funcion">
+                    <br><br>
+
+                    <label for="fuente">Fuente:</label>
+                    <input type="text" id="fuente_22" name="fuente_22">
+                    <br><br>
+                    
+                    <label for="pro_mejor_funcion">Procedimiento que realice la misma función con: mayor efectividad, seguridad o sea más especifico:</label>
+                    <input type="text" id="pro_mejor_funcion" name="pro_mejor_funcion">
+                    <br><br>
+
+                    <!-- Campos de texto verde amarilloso -->
+
+
+                    <label for="codigo_ichi">Codigo ICHI:</label>
+                    <input type="text" id="codigo_ichi" name="codigo_ichi">
+                    <br><br>
+
+                    <label for="des_ichi_objetivo">Descripción ICHI objetivo:</label>
+                    <input type="text" id="des_ichi_objetivo" name="des_ichi_objetivo">
+                    <br><br>
+
+                    <label for="des_ichi_accion">Descripción ICHI acción:</label>
+                    <input type="text" id="des_ichi_accion" name="des_ichi_accion">
+                    <br><br>
+
+                    <label for="des_ichi_medio">Descripción ICHI medio:</label>
+                    <input type="text" id="des_ichi_medio" name="des_ichi_medio">
+                    <br><br>
+
+                    <label for="des_ichi_procedimiento">Descripción ICHI procedimiento:</label>
+                    <input type="text" id="des_ichi_procedimiento" name="des_ichi_procedimiento">
+                    <br><br>
+
+                    <input type="submit" value="Enviar">
+                </form>
+            </div>
+        </div>
+</body>
+</html>
