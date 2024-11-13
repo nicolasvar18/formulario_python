@@ -225,4 +225,5 @@ def buscar_cups():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    pass
     # app.run(debug=True)
